@@ -3,271 +3,324 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ChatSpark — Meet Interesting People</title>
-  <meta name="description" content="ChatSpark lets you instantly connect with strangers who share your interests — no login, no accounts, just real conversations." />
+  <title>ChatSpark — Talk to Interesting People</title>
+  <meta name="description" content="ChatSpark connects you with strangers who share your interests. No login, anonymous, real-time." />
   <link rel="stylesheet" href="/css/style.css" />
   <style>
-    /* ── Landing-specific styles ── */
     .landing-card {
       width: 100%;
-      max-width: 520px;
-      padding: 40px;
+      max-width: 500px;
+      padding: 36px 36px 28px;
     }
-    .logo {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 36px;
-      font-weight: 700;
-      background: linear-gradient(135deg, var(--accent), #ff6584);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+
+    .brand-name {
+      font-family: 'Inter', sans-serif;
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--text);
       letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-    .logo span { color: var(--text-secondary); font-weight: 300; font-size: 14px; display: block; margin-top: 2px; }
-    .section-label {
+    .brand-name svg { color: var(--accent); }
+    .brand-tagline {
       font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--text-dim);
-      margin-bottom: 8px;
+      color: var(--text-3);
+      margin-top: 1px;
+      font-weight: 400;
     }
-    .interest-limit-note {
-      font-size: 12px;
-      color: var(--text-dim);
-      margin-top: 6px;
+
+    .features-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
     }
-    .interest-limit-note b { color: var(--accent); }
+    .feature-item {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 8px;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-2);
+    }
+    .feature-item svg {
+      width: 18px; height: 18px;
+      margin: 0 auto 4px;
+      display: block;
+      stroke: var(--accent);
+    }
+
+    .cta-row {
+      display: flex;
+      gap: 8px;
+    }
 
     /* Searching overlay */
     #searching-overlay {
       position: fixed;
       inset: 0;
       z-index: 50;
-      background: rgba(11,12,26,0.92);
-      backdrop-filter: blur(10px);
+      background: rgba(237,232,224,0.92);
+      backdrop-filter: blur(12px);
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
-      gap: 28px;
+      gap: 24px;
     }
     #searching-overlay h2 {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 700;
+      color: var(--text);
     }
     #searching-overlay p {
-      font-size: 14px;
-      color: var(--text-secondary);
+      font-size: 13px;
+      color: var(--text-2);
       text-align: center;
-      max-width: 280px;
+      max-width: 260px;
     }
     .timer-row {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
     }
-    .timer-text { font-size: 13px; color: var(--text-secondary); }
+    .timer-label { font-size: 12px; color: var(--text-3); }
     .fallback-note {
       font-size: 12px;
-      color: var(--text-dim);
+      color: var(--accent);
       text-align: center;
-      max-width: 260px;
-      line-height: 1.6;
-    }
-    .cancel-search {
-      margin-top: 8px;
-    }
-
-    /* Features row */
-    .features {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 10px;
-      margin-top: 6px;
-    }
-    .feature-pill {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 10px 10px;
-      text-align: center;
-      font-size: 12px;
-      color: var(--text-secondary);
-    }
-    .feature-pill .icon { font-size: 18px; display: block; margin-bottom: 4px; }
-
-    /* Premium toggle area */
-    .toggle-wrap {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 10px 14px;
-    }
-    .toggle-label { font-size: 13px; color: var(--text-secondary); }
-    .toggle { position: relative; width: 40px; height: 22px; }
-    .toggle input { opacity: 0; width: 0; height: 0; }
-    .toggle-slider {
-      position: absolute; inset: 0;
-      background: rgba(255,255,255,0.12);
-      border-radius: var(--radius-pill);
-      cursor: pointer;
-      transition: background var(--transition);
-    }
-    .toggle-slider::after {
-      content: '';
-      position: absolute;
-      width: 16px; height: 16px;
-      border-radius: 50%;
-      background: #fff;
-      top: 3px; left: 3px;
-      transition: transform var(--transition);
-    }
-    .toggle input:checked + .toggle-slider { background: var(--accent); }
-    .toggle input:checked + .toggle-slider::after { transform: translateX(18px); }
-
-    /* Decorative dots */
-    .orb {
-      position: fixed;
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 0;
+      max-width: 240px;
+      font-weight: 500;
     }
 
     @media (max-width: 500px) {
-      .landing-card { padding: 28px 20px; }
-      .features { grid-template-columns: 1fr 1fr; }
-      .logo { font-size: 28px; }
+      .landing-card { padding: 24px 18px 20px; }
+      .features-row { grid-template-columns: 1fr 1fr; }
     }
   </style>
 </head>
 <body>
-  <div class="gradient-bg"></div>
 
-  <!-- Searching overlay (hidden by default) -->
-  <div id="searching-overlay" class="hidden">
-    <div class="pulse-ring">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
-          stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </div>
-    <div style="text-align:center">
-      <h2 id="search-status-text">Finding your match…</h2>
-      <p id="search-sub-text">Looking for someone who shares your interests</p>
-    </div>
-    <div id="timer-section" class="timer-row">
-      <div class="countdown-wrap" id="countdown-wrap">
-        <svg width="52" height="52" viewBox="0 0 52 52">
-          <circle class="track" cx="26" cy="26" r="22" fill="none" stroke-width="4"/>
-          <circle class="fill" id="countdown-circle" cx="26" cy="26" r="22" fill="none" stroke-width="4"
-            stroke-dasharray="138.2" stroke-dashoffset="0"/>
-        </svg>
-        <div class="num" id="countdown-num">15</div>
-      </div>
-      <span class="timer-text">seconds before joining general pool</span>
-    </div>
-    <p id="fallback-note" class="fallback-note hidden">
-      ⚡ No interest match found. Joining general pool — you'll be connected soon!
-    </p>
-    <button id="cancel-search-btn" class="btn btn-secondary cancel-search">Cancel</button>
+<!-- Searching overlay -->
+<div id="searching-overlay" class="hidden">
+  <div class="search-pulse">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+    </svg>
   </div>
-
-  <main class="page fade-in">
-    <div class="landing-card glass">
-      <!-- Header -->
-      <div class="flex items-center justify-between" style="margin-bottom:28px">
-        <div>
-          <div class="logo">
-            ⚡ ChatSpark
-            <span>Anonymous · Interest-based · No login</span>
-          </div>
-        </div>
-        <div id="premium-badge-display" class="badge badge-premium hidden">
-          ★ Premium
-        </div>
-      </div>
-
-      <!-- Feature pills -->
-      <div class="features" style="margin-bottom:28px">
-        <div class="feature-pill"><span class="icon">🎯</span>Interest Match</div>
-        <div class="feature-pill"><span class="icon">🔒</span>No Login</div>
-        <div class="feature-pill"><span class="icon">⚡</span>Instant Chat</div>
-      </div>
-
-      <!-- Interests input -->
-      <div style="margin-bottom:20px">
-        <div class="section-label">Your Interests</div>
-        <div class="chip-input-wrap" id="chip-wrap">
-          <input
-            class="chip-input"
-            id="interest-input"
-            type="text"
-            placeholder="Type an interest and press Enter or comma…"
-            maxlength="40"
-            autocomplete="off"
-          />
-        </div>
-        <p class="interest-limit-note" id="limit-note">
-          Free: up to <b>2 interests</b>. Unlock more with Premium ↓
-        </p>
-      </div>
-
-      <!-- Premium options -->
-      <div style="margin-bottom:20px; display:flex; flex-direction:column; gap:8px" id="premium-options-wrap">
-        <div class="toggle-wrap">
-          <span class="toggle-label">🌍 Country filter (same country only)</span>
-          <label class="toggle">
-            <input type="checkbox" id="country-filter-toggle" disabled />
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
-        <div class="toggle-wrap">
-          <span class="toggle-label">🔴 Hard filter (never random match)</span>
-          <label class="toggle">
-            <input type="checkbox" id="hard-filter-toggle" disabled />
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
-      </div>
-
-      <!-- Premium upsell banner -->
-      <div class="premium-banner" style="margin-bottom:24px" id="premium-upsell">
-        <span class="icon">★</span>
-        <div style="flex:1">
-          <div style="font-size:13px; font-weight:600; color: var(--premium)">Unlock Premium Features</div>
-          <div style="font-size:12px; color: var(--text-secondary); margin-top:2px">
-            Unlimited interests · Hard filters · Country match
-          </div>
-        </div>
-        <button class="btn btn-premium" id="activate-premium-btn" style="padding:8px 16px; font-size:12px">
-          Try Free
-        </button>
-      </div>
-
-      <!-- Action buttons -->
-      <div style="display:flex; gap:10px">
-        <button class="btn btn-primary w-full" id="start-btn" style="font-size:16px; padding:14px">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          Start Chatting
-        </button>
-        <button class="btn btn-secondary" id="random-btn" title="Skip interests, chat with anyone">
-          🎲
-        </button>
-      </div>
-
-      <p class="text-center text-dim text-sm" style="margin-top:16px; line-height:1.6">
-        By chatting you agree to be respectful.
-        Inappropriate behavior is monitored.
-      </p>
+  <div style="text-align:center">
+    <h2 id="search-status-text">Finding your match</h2>
+    <p id="search-sub-text">Looking for someone who shares your interests</p>
+  </div>
+  <div id="timer-section" class="timer-row">
+    <div class="countdown-wrap" id="countdown-wrap">
+      <svg width="48" height="48" viewBox="0 0 48 48">
+        <circle class="countdown-track" cx="24" cy="24" r="20" fill="none" stroke-width="3.5"/>
+        <circle class="countdown-fill" id="countdown-circle" cx="24" cy="24" r="20" fill="none" stroke-width="3.5"
+          stroke-dasharray="125.7" stroke-dashoffset="0"/>
+      </svg>
+      <div class="countdown-num" id="countdown-num">15</div>
     </div>
-  </main>
+    <span class="timer-label">seconds before general pool</span>
+  </div>
+  <p id="fallback-note" class="fallback-note hidden">No interest match found. Joining general pool now.</p>
+  <button id="cancel-search-btn" class="btn btn-ghost" style="margin-top:4px">Cancel</button>
+</div>
 
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="/js/landing.js"></script>
+<main class="page fade-in">
+  <div class="landing-card card">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between" style="margin-bottom:24px">
+      <div>
+        <div class="brand-name">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+          </svg>
+          ChatSpark
+        </div>
+        <div class="brand-tagline">Anonymous — Interest-based — No login</div>
+      </div>
+      <div id="premium-badge" class="hidden">
+        <span class="badge badge-premium" id="premium-badge-inner">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>
+          Premium
+        </span>
+      </div>
+    </div>
+
+    <!-- Feature pills -->
+    <div class="features-row" style="margin-bottom:24px">
+      <div class="feature-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        Interest Match
+      </div>
+      <div class="feature-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        No Login
+      </div>
+      <div class="feature-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+        </svg>
+        Instant Chat
+      </div>
+    </div>
+
+    <!-- Interests -->
+    <div style="margin-bottom:20px">
+      <div class="section-label">Your Interests</div>
+      <div class="chip-input-wrap" id="chip-wrap">
+        <input class="chip-input" id="interest-input" type="text"
+          placeholder="Type and press Enter or comma..." maxlength="40" autocomplete="off"/>
+      </div>
+      <p class="note" id="limit-note">Free plan: up to <b>2 interests</b>. Upgrade for unlimited.</p>
+    </div>
+
+    <!-- My Gender -->
+    <div style="margin-bottom:20px">
+      <div class="section-label">My Gender</div>
+      <div class="gender-group" id="my-gender-group">
+        <button class="gender-btn" data-gender="male" id="mg-male">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="14" r="6"/><path d="m16.7 7.3 4-4M20 4h-4M20 4v4"/></svg>
+          Male
+        </button>
+        <button class="gender-btn" data-gender="female" id="mg-female">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M12 14v7M9 18h6"/></svg>
+          Female
+        </button>
+        <button class="gender-btn" data-gender="other" id="mg-other">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+          Other
+        </button>
+      </div>
+    </div>
+
+    <!-- Chat With (premium gender filter) -->
+    <div style="margin-bottom:20px" id="chat-with-section">
+      <div class="flex items-center gap-2" style="margin-bottom:8px">
+        <div class="section-label" style="margin-bottom:0">Chat With</div>
+        <span id="gender-lock-badge" class="badge badge-premium" style="font-size:10px">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Premium
+        </span>
+      </div>
+      <div class="gender-group" id="pref-gender-group">
+        <button class="gender-btn locked" data-gender="male" id="pg-male" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="14" r="6"/><path d="m16.7 7.3 4-4M20 4h-4M20 4v4"/></svg>
+          Male
+        </button>
+        <button class="gender-btn locked" data-gender="female" id="pg-female" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M12 14v7M9 18h6"/></svg>
+          Female
+        </button>
+        <button class="gender-btn active-any locked" data-gender="any" id="pg-any" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Anyone
+        </button>
+      </div>
+    </div>
+
+    <!-- Country filter (premium) -->
+    <div id="country-section" style="margin-bottom:20px">
+      <div class="toggle-row">
+        <span class="toggle-label flex items-center gap-2">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          Same country only
+          <span class="badge badge-premium" style="font-size:10px">Premium</span>
+        </span>
+        <label class="toggle">
+          <input type="checkbox" id="country-filter-toggle" disabled />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Premium card -->
+    <div id="premium-section" style="margin-bottom:20px">
+      <!-- Not premium -->
+      <div id="premium-upsell" class="premium-card">
+        <div class="flex items-center justify-between" style="margin-bottom:4px">
+          <span style="font-size:14px;font-weight:700;color:var(--accent)">Premium — Rs.50 / day</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/>
+          </svg>
+        </div>
+        <ul class="premium-features">
+          <li>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Unlimited interests
+          </li>
+          <li>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Filter by gender
+          </li>
+          <li>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Same country matching
+          </li>
+          <li>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            No ads, priority matching
+          </li>
+        </ul>
+        <button class="btn btn-primary w-full" id="pay-btn" style="font-size:14px;padding:12px">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>
+          </svg>
+          Pay Rs.50 — Unlock for 24 hours
+        </button>
+        <p class="note" style="text-align:center;margin-top:8px" id="pay-note"></p>
+      </div>
+
+      <!-- Premium active -->
+      <div id="premium-active" class="premium-card active hidden">
+        <div class="flex items-center gap-3">
+          <div style="width:36px;height:36px;border-radius:50%;background:#F0FDF4;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div>
+            <div style="font-size:14px;font-weight:700;color:var(--green)">Premium Active</div>
+            <div style="font-size:12px;color:var(--text-3)" id="premium-expiry-text">Valid for 24 hours</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-row">
+      <button class="btn btn-primary w-full" id="start-btn" style="font-size:15px;padding:13px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        Start Chatting
+      </button>
+      <button class="btn btn-ghost btn-icon" id="random-btn" title="Chat with anyone, skip interests">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/>
+          <polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/>
+        </svg>
+      </button>
+    </div>
+
+    <p class="note" style="text-align:center;margin-top:14px">
+      By chatting you agree to be respectful. Inappropriate content is moderated.
+    </p>
+  </div>
+</main>
+
+<!-- Razorpay -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<!-- FingerprintJS -->
+<script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@4/dist/fp.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/landing.js"></script>
 </body>
 </html>

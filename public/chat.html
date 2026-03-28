@@ -4,256 +4,203 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ChatSpark — Chatting</title>
-  <meta name="description" content="You are now chatting with a stranger on ChatSpark." />
   <link rel="stylesheet" href="/css/style.css" />
   <style>
-    /* ── Chat page layout ── */
-    html, body { height: 100%; overflow: hidden; }
+    html, body { height: 100%; overflow: hidden; background: var(--bg); }
 
     .chat-page {
-      position: relative;
-      z-index: 1;
+      position: relative; z-index: 1;
       height: 100vh;
-      display: flex;
-      flex-direction: column;
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 12px 12px 0;
+      display: flex; flex-direction: column;
+      max-width: 720px; margin: 0 auto;
+      padding: 10px 10px 0;
     }
 
-    /* ── Top bar ── */
+    /* Top bar */
     .chat-topbar {
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 10px 16px;
-      background: var(--bg-card);
+      gap: 10px;
+      padding: 9px 14px;
+      background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
-      margin-bottom: 10px;
-      backdrop-filter: blur(20px);
+      margin-bottom: 8px;
       flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
     }
-    .chat-topbar .logo-sm {
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 700;
-      font-size: 18px;
-      background: linear-gradient(135deg, var(--accent), #ff6584);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+    .brand-sm {
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--accent);
+      letter-spacing: -0.3px;
+      display: flex; align-items: center; gap: 5px;
+      white-space: nowrap;
     }
-    .status-dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      background: #43e97b;
-      box-shadow: 0 0 6px #43e97b;
-      flex-shrink: 0;
-    }
-    .status-dot.red { background: #ff4757; box-shadow: 0 0 6px #ff4757; }
-    .status-dot.yellow { background: var(--premium); box-shadow: 0 0 6px var(--premium); }
-    .partner-label {
-      font-size: 13px;
-      color: var(--text-secondary);
-      flex: 1;
-    }
-    .shared-chips {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-      max-width: 200px;
-    }
+    .topbar-sep { width: 1px; height: 18px; background: var(--border); flex-shrink: 0; }
+    .partner-label { font-size: 13px; color: var(--text-2); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .shared-chips { display: flex; gap: 5px; flex-wrap: nowrap; overflow: hidden; max-width: 180px; }
 
-    /* ── Messages area ── */
+    /* Messages */
     .messages-area {
       flex: 1;
       overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      padding: 4px 0 16px;
+      display: flex; flex-direction: column;
+      gap: 8px;
+      padding: 2px 0 12px;
       scroll-behavior: smooth;
     }
-
-    /* System messages */
     .sys-msg {
       text-align: center;
-      font-size: 12px;
-      color: var(--text-dim);
-      padding: 4px 0;
+      font-size: 11px;
+      color: var(--text-3);
+      padding: 3px 0;
     }
 
-    /* ── Input bar ── */
+    /* Controls */
+    .controls-bar {
+      display: flex; gap: 8px;
+      padding: 8px 0; flex-shrink: 0;
+    }
+
+    /* Input bar */
     .input-bar {
-      display: flex;
-      gap: 10px;
-      align-items: flex-end;
-      padding: 10px 0 12px;
-      flex-shrink: 0;
+      display: flex; gap: 8px; align-items: flex-end;
+      padding: 8px 0 10px; flex-shrink: 0;
     }
-    .msg-input-wrap {
-      flex: 1;
-      position: relative;
-    }
+    .msg-input-wrap { flex: 1; position: relative; }
     .msg-input {
       width: 100%;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid var(--border);
+      background: var(--surface);
+      border: 1.5px solid var(--border);
       border-radius: var(--radius-md);
-      color: var(--text-primary);
-      font-family: inherit;
-      font-size: 15px;
-      padding: 12px 16px;
-      outline: none;
-      resize: none;
-      max-height: 120px;
-      min-height: 48px;
-      line-height: 1.5;
+      color: var(--text);
+      font-family: inherit; font-size: 14px;
+      padding: 11px 48px 11px 14px;
+      outline: none; resize: none;
+      max-height: 110px; min-height: 44px; line-height: 1.5;
       transition: border-color var(--transition), box-shadow var(--transition);
     }
-    .msg-input:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px var(--accent-light);
-    }
-    .msg-input::placeholder { color: var(--text-dim); }
+    .msg-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-muted); }
+    .msg-input::placeholder { color: var(--text-3); }
+    .char-count { position: absolute; right: 10px; bottom: 9px; font-size: 10px; color: var(--text-3); pointer-events: none; }
+
     .send-btn {
-      width: 48px; height: 48px;
+      width: 44px; height: 44px;
       border-radius: 50%;
-      background: linear-gradient(135deg, var(--accent), #9b59f5);
-      border: none;
-      color: #fff;
-      cursor: pointer;
+      background: var(--accent);
+      border: none; color: #fff; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
       transition: all var(--transition);
-      box-shadow: 0 4px 16px rgba(108,99,255,0.4);
+      box-shadow: 0 3px 12px rgba(240,24,105,0.35);
     }
-    .send-btn:hover { transform: scale(1.08); box-shadow: 0 6px 22px rgba(108,99,255,0.6); }
-    .send-btn:active { transform: scale(0.95); }
+    .send-btn:hover:not(:disabled) { background: var(--accent-dark); transform: scale(1.06); }
     .send-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
 
-    /* ── Controls bar ── */
-    .controls-bar {
-      display: flex;
-      gap: 8px;
-      padding: 0 0 10px;
-      flex-shrink: 0;
-    }
-
-    /* ── Disconnected overlay ── */
-    #disconnected-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 40;
-      background: rgba(11,12,26,0.9);
-      backdrop-filter: blur(12px);
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 20px;
-    }
-    #disconnected-overlay h2 { font-size: 24px; }
-    #disconnected-overlay p { font-size: 14px; color: var(--text-secondary); text-align: center; max-width: 300px; }
-
-    /* ── Connecting overlay ── */
-    #connecting-overlay {
+    /* Overlays */
+    .overlay {
       position: fixed; inset: 0; z-index: 40;
-      background: rgba(11,12,26,0.95);
+      background: rgba(237,232,224,0.88);
       backdrop-filter: blur(10px);
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
-      gap: 20px;
+      gap: 18px;
     }
-    #connecting-overlay p { color: var(--text-secondary); font-size: 15px; }
-
-    /* Char count */
-    .char-count {
-      position: absolute;
-      right: 12px; bottom: 10px;
-      font-size: 11px;
-      color: var(--text-dim);
-      pointer-events: none;
-    }
+    .overlay h2 { font-size: 22px; font-weight: 700; }
+    .overlay p { font-size: 13px; color: var(--text-2); text-align: center; max-width: 280px; }
 
     @media (max-width: 600px) {
-      .chat-page { padding: 8px 8px 0; }
+      .chat-page { padding: 7px 7px 0; }
       .shared-chips { display: none; }
     }
   </style>
 </head>
 <body>
-  <div class="gradient-bg"></div>
 
-  <!-- Connecting/waiting overlay -->
-  <div id="connecting-overlay">
-    <div class="spinner"></div>
-    <p id="connecting-text">Connecting…</p>
-    <button class="btn btn-secondary" onclick="location.href='/'">← Back</button>
+<!-- Connecting overlay -->
+<div class="overlay" id="connecting-overlay">
+  <div class="search-pulse">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+    </svg>
+  </div>
+  <p id="connecting-text" style="font-size:15px;font-weight:600;color:var(--text)">Connecting...</p>
+  <button class="btn btn-ghost" onclick="location.href='/'">Back to home</button>
+</div>
+
+<!-- Disconnected overlay -->
+<div class="overlay hidden" id="disconnected-overlay">
+  <div style="width:56px;height:56px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--text-2)" stroke-width="2" stroke-linecap="round">
+      <path d="M18 6 6 18M6 6l12 12"/>
+    </svg>
+  </div>
+  <h2>Stranger left</h2>
+  <p id="disconnect-stats"></p>
+  <div class="flex gap-2">
+    <button class="btn btn-primary" id="find-next-btn">Find Next</button>
+    <button class="btn btn-secondary" onclick="location.href='/'">Home</button>
+  </div>
+</div>
+
+<!-- Chat layout -->
+<div class="chat-page">
+
+  <!-- Top bar -->
+  <div class="chat-topbar">
+    <div class="brand-sm">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+      </svg>
+      ChatSpark
+    </div>
+    <div class="topbar-sep"></div>
+    <div class="status-dot" id="status-dot"></div>
+    <span class="partner-label" id="partner-label">Connecting...</span>
+    <div class="shared-chips" id="shared-chips-topbar"></div>
+    <div id="premium-indicator"></div>
   </div>
 
-  <!-- Disconnected overlay (shown when partner leaves) -->
-  <div id="disconnected-overlay" class="hidden">
-    <div style="font-size: 48px">👋</div>
-    <h2>Stranger left the chat</h2>
-    <p id="disconnect-stats"></p>
-    <div style="display:flex; gap:10px">
-      <button class="btn btn-primary" id="find-next-btn">Find Next →</button>
-      <button class="btn btn-secondary" onclick="location.href='/'">← Home</button>
-    </div>
+  <!-- Messages -->
+  <div class="messages-area" id="messages-area"></div>
+
+  <!-- Controls -->
+  <div class="controls-bar">
+    <button class="btn btn-ghost" id="stop-btn" style="flex:1;justify-content:center">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="5" width="14" height="14" rx="2"/></svg>
+      Stop
+    </button>
+    <button class="btn btn-ghost" id="next-btn" style="flex:1;justify-content:center" disabled>
+      Next
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
+      </svg>
+    </button>
+    <button class="btn btn-ghost btn-icon" id="home-btn" title="Back to home">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+    </button>
   </div>
 
-  <!-- Main chat layout -->
-  <div class="chat-page">
-
-    <!-- Top bar -->
-    <div class="chat-topbar">
-      <span class="logo-sm">⚡</span>
-      <div class="status-dot" id="status-dot"></div>
-      <span class="partner-label" id="partner-label">Connecting…</span>
-      <div class="shared-chips" id="shared-chips-topbar"></div>
-      <div id="premium-indicator"></div>
+  <!-- Input -->
+  <div class="input-bar">
+    <div class="msg-input-wrap">
+      <textarea class="msg-input" id="msg-input" placeholder="Type a message..." rows="1" maxlength="500" disabled></textarea>
+      <div class="char-count" id="char-count"></div>
     </div>
-
-    <!-- Messages -->
-    <div class="messages-area" id="messages-area">
-      <!-- Messages injected by JS -->
-    </div>
-
-    <!-- Controls -->
-    <div class="controls-bar">
-      <button class="btn btn-danger" id="stop-btn" style="flex:1">
-        ⏹ Stop
-      </button>
-      <button class="btn btn-secondary" id="next-btn" style="flex:1" disabled>
-        → Next
-      </button>
-      <button class="btn btn-secondary btn-icon" id="home-btn" title="Home">
-        🏠
-      </button>
-    </div>
-
-    <!-- Input -->
-    <div class="input-bar">
-      <div class="msg-input-wrap">
-        <textarea
-          class="msg-input"
-          id="msg-input"
-          placeholder="Type a message…"
-          rows="1"
-          maxlength="500"
-          disabled
-        ></textarea>
-        <div class="char-count" id="char-count"></div>
-      </div>
-      <button class="send-btn" id="send-btn" disabled title="Send message">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <line x1="22" y1="2" x2="11" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <polygon points="22 2 15 22 11 13 2 9 22 2" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
-    </div>
+    <button class="send-btn" id="send-btn" disabled>
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <line x1="22" y1="2" x2="11" y2="13"/>
+        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+      </svg>
+    </button>
   </div>
+</div>
 
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="/js/chat.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/chat.js"></script>
 </body>
 </html>
