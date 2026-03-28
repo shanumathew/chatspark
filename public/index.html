@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="theme-color" content="#EDE8E0" />
   <title>ChatSpark — Talk to Interesting People</title>
   <meta name="description" content="ChatSpark connects you with strangers who share your interests. No login, anonymous, real-time." />
   <link rel="stylesheet" href="/css/style.css" />
@@ -63,11 +66,14 @@
       position: fixed;
       inset: 0;
       z-index: 50;
-      background: rgba(237,232,224,0.92);
+      background: rgba(237,232,224,0.94);
       backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
       gap: 24px;
+      padding: 24px;
+      padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
     }
     #searching-overlay h2 {
       font-size: 20px;
@@ -94,9 +100,35 @@
       font-weight: 500;
     }
 
+    /* Add-interest button (visible on mobile) */
+    .add-interest-btn {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      flex-shrink: 0;
+      font-size: 20px;
+      line-height: 1;
+      touch-action: manipulation;
+    }
+
     @media (max-width: 500px) {
-      .landing-card { padding: 24px 18px 20px; }
+      .landing-card { padding: 20px 16px 16px; border-radius: 16px; }
       .features-row { grid-template-columns: 1fr 1fr; }
+      .cta-row { flex-direction: column; }
+      .cta-row .btn-ghost { height: 44px; border-radius: var(--radius-pill); }
+      .brand-name { font-size: 22px; }
+      .add-interest-btn { display: flex; }
+    }
+    @media (max-width: 380px) {
+      .features-row { grid-template-columns: 1fr 1fr 1fr; font-size: 10px; }
+      .feature-item { padding: 8px 4px; }
+      .feature-item svg { width: 15px; height: 15px; }
     }
   </style>
 </head>
@@ -177,7 +209,11 @@
       <div class="section-label">Your Interests</div>
       <div class="chip-input-wrap" id="chip-wrap">
         <input class="chip-input" id="interest-input" type="text"
-          placeholder="Type and press Enter or comma..." maxlength="40" autocomplete="off"/>
+          placeholder="Type and press Enter..." maxlength="40" autocomplete="off"
+          inputmode="text" enterkeyhint="done" />
+        <button class="add-interest-btn" id="add-interest-btn" type="button" aria-label="Add interest">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
       </div>
       <p class="note" id="limit-note">Free plan: up to <b>2 interests</b>. Upgrade for unlimited.</p>
     </div>
@@ -302,11 +338,12 @@
         </svg>
         Start Chatting
       </button>
-      <button class="btn btn-ghost btn-icon" id="random-btn" title="Chat with anyone, skip interests">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <button class="btn btn-ghost" id="random-btn" style="white-space:nowrap" title="Chat with anyone, skip interests">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/>
           <polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/>
         </svg>
+        Random
       </button>
     </div>
 

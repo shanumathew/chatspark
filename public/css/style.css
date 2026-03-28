@@ -5,6 +5,12 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@1,700&display=swap');
 
+/* ── Mobile base ────────────────────────────────────────────── */
+:root {
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-top:    env(safe-area-inset-top,    0px);
+}
+
 /* ── Tokens ─────────────────────────────────────────────────── */
 :root {
   --bg:          #EDE8E0;
@@ -51,9 +57,12 @@ body {
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
+  min-height: 100dvh;
   overflow-x: hidden;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+  -webkit-text-size-adjust: 100%;
 }
 
 /* ── Subtle noise texture overlay ───────────────────────────── */
@@ -83,6 +92,7 @@ body::before {
   align-items: center;
   gap: 8px;
   padding: 11px 24px;
+  min-height: 44px; /* iOS minimum touch target */
   border-radius: var(--radius-pill);
   font-family: inherit;
   font-size: 14px;
@@ -91,8 +101,11 @@ body::before {
   border: none;
   transition: all var(--transition);
   user-select: none;
+  -webkit-user-select: none;
   white-space: nowrap;
   letter-spacing: 0.01em;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 .btn svg { flex-shrink: 0; }
 
@@ -156,7 +169,8 @@ body::before {
   flex-direction: column;
   align-items: center;
   gap: 5px;
-  padding: 10px 8px;
+  padding: 12px 8px;
+  min-height: 64px; /* comfortable touch target */
   border-radius: var(--radius-md);
   border: 1.5px solid var(--border);
   background: var(--surface);
@@ -166,8 +180,10 @@ body::before {
   font-size: 12px;
   font-weight: 500;
   color: var(--text-2);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
-.gender-btn svg { width: 20px; height: 20px; stroke: currentColor; }
+.gender-btn svg { width: 20px; height: 20px; stroke: currentColor; flex-shrink: 0; }
 .gender-btn:hover { border-color: var(--border-2); background: var(--surface-2); }
 
 .gender-btn.active-male   { border-color: var(--gender-m); background: #EFF6FF; color: var(--gender-m); }
@@ -471,9 +487,11 @@ body::before {
 .page {
   position: relative; z-index: 1;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   padding: 24px 16px;
+  padding-bottom: calc(24px + var(--safe-bottom));
 }
 
 /* ── Fade in ─────────────────────────────────────────────────── */
@@ -483,8 +501,28 @@ body::before {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Responsive ─────────────────────────────────────────────── */
-@media (max-width: 600px) {
+/* ── Responsive — Tablet ──────────────────────────────────────── */
+@media (max-width: 640px) {
   .btn { padding: 10px 18px; font-size: 13px; }
   .bubble { max-width: 87%; }
+  .gender-group { gap: 6px; }
+  .gender-btn { padding: 10px 4px; font-size: 11px; }
+  .gender-btn svg { width: 18px; height: 18px; }
+}
+
+/* ── Responsive — Mobile ──────────────────────────────────────── */
+@media (max-width: 430px) {
+  .btn { min-height: 48px; }
+  .gender-btn { min-height: 60px; gap: 3px; font-size: 11px; }
+  .chip-input-wrap { padding: 8px 10px; }
+  .chip { font-size: 12px; padding: 4px 10px; }
+  .toggle-row { padding: 11px 13px; }
+  .premium-card { padding: 14px; }
+  .section-label { font-size: 10px; }
+}
+
+/* ── Responsive — Very small ──────────────────────────────────── */
+@media (max-width: 360px) {
+  .gender-btn { font-size: 10px; padding: 8px 2px; }
+  .gender-btn svg { width: 16px; height: 16px; }
 }

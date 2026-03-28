@@ -265,7 +265,21 @@
       interestInput.value = '';
     }
   });
-  chipWrap.addEventListener('click', () => interestInput.focus());
+  chipWrap.addEventListener('click', (e) => {
+    if (!e.target.closest('.chip') && !e.target.closest('.add-interest-btn')) interestInput.focus();
+  });
+
+  // Mobile: tap the + button to add interest
+  const addBtn = document.getElementById('add-interest-btn');
+  if (addBtn) {
+    addBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const val = interestInput.value.trim();
+      if (val) { addInterest(val); interestInput.value = ''; }
+      interestInput.focus();
+    });
+  }
+
 
   // ── Countdown ──────────────────────────────────────────────────────────────
   const CIRCUMFERENCE = 2 * Math.PI * 20; // r=20 → ~125.7
